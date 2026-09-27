@@ -1,7 +1,12 @@
 <script setup lang="ts">
 import { Button, InputText, Textarea, Tabs, TabList, Tab, TabPanels, TabPanel } from 'primevue';
+import { useToast } from 'primevue/usetoast';
+import { useConfirm } from 'primevue/useconfirm';
 import DashboardLayout from '@/Layouts/DashboardLayout.vue';
 import { Head, useForm } from '@inertiajs/vue3';
+
+const toast = useToast();
+const confirm = useConfirm();
 
 const props = defineProps<{
     user: {
@@ -28,14 +33,54 @@ const passwordForm = useForm({
     password_confirmation: '',
 });
 
+// 1. Profile Update with Confirmation
 const updateProfile = () => {
-    profileForm.patch(route('profile.update'), { preserveScroll: true });
+    confirm.require({
+        message: 'Are you sure you want to save these profile changes?',
+        header: 'Save Confirmation',
+        icon: 'pi pi-save',
+        acceptLabel: 'Yes, Save',
+        rejectLabel: 'No, Cancel',
+        acceptClass: 'p-button-success',
+        accept: () => {
+            profileForm.patch(route('profile.update'), {
+                preserveScroll: true,
+                onSuccess: () => {
+                    toast.add({
+                        severity: 'success',
+                        summary: 'Success',
+                        detail: 'Profile updated successfully!',
+                        life: 3000
+                    });
+                }
+            });
+        }
+    });
 };
 
+// 2. Password Update with Confirmation
 const updatePassword = () => {
-    passwordForm.put(route('password.update'), {
-        preserveScroll: true,
-        onSuccess: () => passwordForm.reset(),
+    confirm.require({
+        message: 'Are you sure you want to update your password?',
+        header: 'Password Confirmation',
+        icon: 'pi pi-lock',
+        acceptLabel: 'Yes, Update',
+        rejectLabel: 'No, Cancel',
+        acceptClass: 'p-button-success',
+        accept: () => {
+            passwordForm.put(route('password.update'), {
+                preserveScroll: true,
+                onSuccess: () => {
+                    passwordForm.reset();
+                    toast.add({
+                        severity: 'success',
+                        summary: 'Success',
+                        detail: 'Password updated successfully!',
+                        life: 3000
+                    });
+                }
+            });
+        }
     });
 };
 </script>
@@ -98,12 +143,13 @@ const updatePassword = () => {
                                 <label for="bio"
                                     class="block text-sm font-medium text-graphite-600 dark:text-graphite-400 mb-2">Bio</label>
                                 <Textarea id="bio" v-model="profileForm.bio" rows="5" class="w-full" />
-                                <p v-if="profileForm.errors.bio" class="text-red-500 text-sm mt-1">{{ profileForm.errors.bio
-                                    }}</p>
+                                <p v-if="profileForm.errors.bio" class="text-red-500 text-sm mt-1">{{
+                                    profileForm.errors.bio }}</p>
                             </div>
 
                             <div class="flex justify-end">
-                                <Button type="submit" label="Save Changes" :loading="profileForm.processing"
+                                <Button type="submit" label="Save Changes" icon="pi pi-save"
+                                    :loading="profileForm.processing"
                                     class="bg-iris-500 border-iris-500 text-white hover:bg-iris-600" />
                             </div>
                         </form>
@@ -125,7 +171,8 @@ const updatePassword = () => {
                                 <label for="password"
                                     class="block text-sm font-medium text-graphite-600 dark:text-graphite-400 mb-2">New
                                     Password</label>
-                                <InputText id="password" type="password" v-model="passwordForm.password" class="w-full" />
+                                <InputText id="password" type="password" v-model="passwordForm.password"
+                                    class="w-full" />
                                 <p v-if="passwordForm.errors.password" class="text-red-500 text-sm mt-1">{{
                                     passwordForm.errors.password }}</p>
                             </div>
@@ -139,8 +186,8 @@ const updatePassword = () => {
                                     passwordForm.errors.password_confirmation }}</p>
                             </div>
                             <div class="flex justify-end">
-                                <Button type="submit" label="Update Password" :loading="passwordForm.processing"
-                                    severity="secondary"
+                                <Button type="submit" label="Update Password" icon="pi pi-lock"
+                                    :loading="passwordForm.processing" severity="secondary"
                                     class="bg-graphite-800 border-graphite-800 text-white hover:bg-graphite-900" />
                             </div>
                         </form>

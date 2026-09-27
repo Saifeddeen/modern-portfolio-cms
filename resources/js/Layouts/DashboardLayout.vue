@@ -2,6 +2,9 @@
 import { ref, onMounted } from 'vue';
 import { Link } from '@inertiajs/vue3';
 import { Menu, Moon, Sun, LayoutDashboard, User, Folder, Briefcase, Settings, LogOut } from '@lucide/vue';
+// Import the global components
+import Toast from 'primevue/toast';
+import ConfirmDialog from 'primevue/confirmdialog';
 
 const sidebarOpen = ref(false);
 const isDark = ref(false);
@@ -9,9 +12,9 @@ const isDark = ref(false);
 const navigation = [
     { name: 'Dashboard', route: 'dashboard', icon: LayoutDashboard },
     { name: 'Profile', route: 'profile.edit', icon: User },
-    { name: 'Projects', route: 'dashboard', icon: Folder }, // Placeholder
-    { name: 'Experience', route: 'dashboard', icon: Briefcase }, // Placeholder
-    { name: 'Settings', route: 'dashboard', icon: Settings }, // Placeholder
+    { name: 'Projects', route: 'dashboard', icon: Folder },
+    { name: 'Experience', route: 'dashboard', icon: Briefcase },
+    { name: 'Settings', route: 'dashboard', icon: Settings },
 ];
 
 onMounted(() => {
@@ -23,12 +26,12 @@ const toggleDarkMode = () => {
     isDark.value = !isDark.value;
 
     if (isDark.value) {
-        html.classList.add('dark');       // For Tailwind
-        html.classList.add('app-dark');   // For PrimeVue
+        html.classList.add('dark');
+        html.classList.add('app-dark');
         localStorage.theme = 'dark';
     } else {
-        html.classList.remove('dark');       // For Tailwind
-        html.classList.remove('app-dark');   // For PrimeVue
+        html.classList.remove('dark');
+        html.classList.remove('app-dark');
         localStorage.theme = 'light';
     }
 };
@@ -36,6 +39,10 @@ const toggleDarkMode = () => {
 
 <template>
     <div class="min-h-screen bg-graphite-50 dark:bg-graphite-900 transition-colors duration-300">
+        <!-- Global PrimeVue Overlays -->
+        <Toast position="top-right" />
+        <ConfirmDialog />
+
         <!-- Sidebar -->
         <aside
             class="fixed top-0 left-0 z-40 h-screen w-64 transition-transform duration-300 -translate-x-full lg:translate-x-0 bg-white dark:bg-graphite-950 border-r border-graphite-200 dark:border-graphite-800"

@@ -7,6 +7,8 @@ import { createApp, DefineComponent, h } from 'vue';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy';
 import PrimeVue from 'primevue/config';
 import AuraTheme from '@primeuix/themes/aura';
+import ToastService from 'primevue/toastservice'; // Add this
+import ConfirmationService from 'primevue/confirmationservice'; // Add this
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
@@ -14,8 +16,8 @@ createInertiaApp({
     title: (title) => `${title} - ${appName}`,
     resolve: (name) =>
         resolvePageComponent(
-            `./Pages/${name}.vue`,
-            import.meta.glob<DefineComponent>('./Pages/**/*.vue'),
+            `./pages/${name}.vue`,
+            import.meta.glob<DefineComponent>('./pages/**/*.vue'),
         ),
     setup({ el, App, props, plugin }) {
         const app = createApp({ render: () => h(App, props) });
@@ -31,6 +33,10 @@ createInertiaApp({
                 }
             }
         });
+
+        // Register PrimeVue Services
+        app.use(ToastService);
+        app.use(ConfirmationService);
 
         app.mount(el);
     },
