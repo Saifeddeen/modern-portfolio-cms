@@ -149,8 +149,7 @@ const updatePassword = () => {
 
                             <div class="flex justify-end">
                                 <Button type="submit" label="Save Changes" icon="pi pi-save"
-                                    :loading="profileForm.processing"
-                                    class="bg-iris-500 border-iris-500 text-white hover:bg-iris-600" />
+                                    :loading="profileForm.processing" />
                             </div>
                         </form>
                     </TabPanel>

@@ -9,6 +9,7 @@ import PrimeVue from 'primevue/config';
 import AuraTheme from '@primeuix/themes/aura';
 import ToastService from 'primevue/toastservice'; // Add this
 import ConfirmationService from 'primevue/confirmationservice'; // Add this
+import AuraIris from './themes/aura-iris';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
@@ -27,7 +28,7 @@ createInertiaApp({
 
         app.use(PrimeVue, {
             theme: {
-                preset: AuraTheme,
+                preset: AuraIris,
                 options: {
                     darkModeSelector: '.app-dark',
                 }
