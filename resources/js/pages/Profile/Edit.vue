@@ -1,52 +1,152 @@
 <script setup lang="ts">
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import DeleteUserForm from './Partials/DeleteUserForm.vue';
-import UpdatePasswordForm from './Partials/UpdatePasswordForm.vue';
-import UpdateProfileInformationForm from './Partials/UpdateProfileInformationForm.vue';
-import { Head } from '@inertiajs/vue3';
+import { Button, InputText, Textarea, Tabs, TabList, Tab, TabPanels, TabPanel } from 'primevue';
+import DashboardLayout from '@/Layouts/DashboardLayout.vue';
+import { Head, useForm } from '@inertiajs/vue3';
 
-defineProps<{
-    mustVerifyEmail?: boolean;
-    status?: string;
+const props = defineProps<{
+    user: {
+        id: number;
+        name: string;
+        email: string;
+        username: string | null;
+        title: string | null;
+        bio: string | null;
+    }
 }>();
+
+const profileForm = useForm({
+    name: props.user.name,
+    email: props.user.email,
+    username: props.user.username,
+    title: props.user.title,
+    bio: props.user.bio,
+});
+
+const passwordForm = useForm({
+    current_password: '',
+    password: '',
+    password_confirmation: '',
+});
+
+const updateProfile = () => {
+    profileForm.patch(route('profile.update'), { preserveScroll: true });
+};
+
+const updatePassword = () => {
+    passwordForm.put(route('password.update'), {
+        preserveScroll: true,
+        onSuccess: () => passwordForm.reset(),
+    });
+};
 </script>
 
 <template>
+
     <Head title="Profile" />
 
-    <AuthenticatedLayout>
-        <template #header>
-            <h2
-                class="text-xl font-semibold leading-tight text-gray-800"
-            >
-                Profile
-            </h2>
-        </template>
+    <DashboardLayout>
+        <div
+            class="bg-white dark:bg-graphite-950 p-8 rounded-xl shadow-soft border border-graphite-200 dark:border-graphite-800">
+            <h1 class="text-xl font-semibold text-graphite-800 dark:text-white mb-6">Profile Settings</h1>
 
-        <div class="py-12">
-            <div class="mx-auto max-w-7xl space-y-6 sm:px-6 lg:px-8">
-                <div
-                    class="bg-white p-4 shadow sm:rounded-lg sm:p-8"
-                >
-                    <UpdateProfileInformationForm
-                        :must-verify-email="mustVerifyEmail"
-                        :status="status"
-                        class="max-w-xl"
-                    />
-                </div>
+            <Tabs value="0">
+                <TabList>
+                    <Tab value="0">Profile Information</Tab>
+                    <Tab value="1">Update Password</Tab>
+                </TabList>
+                <TabPanels>
+                    <!-- Profile Information Tab -->
+                    <TabPanel value="0">
+                        <form @submit.prevent="updateProfile" class="space-y-6 mt-6">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label for="name"
+                                        class="block text-sm font-medium text-graphite-600 dark:text-graphite-400 mb-2">Name</label>
+                                    <InputText id="name" v-model="profileForm.name" class="w-full" />
+                                    <p v-if="profileForm.errors.name" class="text-red-500 text-sm mt-1">{{
+                                        profileForm.errors.name }}</p>
+                                </div>
+                                <div>
+                                    <label for="email"
+                                        class="block text-sm font-medium text-graphite-600 dark:text-graphite-400 mb-2">Email</label>
+                                    <InputText id="email" type="email" v-model="profileForm.email" class="w-full" />
+                                    <p v-if="profileForm.errors.email" class="text-red-500 text-sm mt-1">{{
+                                        profileForm.errors.email }}</p>
+                                </div>
+                            </div>
 
-                <div
-                    class="bg-white p-4 shadow sm:rounded-lg sm:p-8"
-                >
-                    <UpdatePasswordForm class="max-w-xl" />
-                </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label for="username"
+                                        class="block text-sm font-medium text-graphite-600 dark:text-graphite-400 mb-2">Username</label>
+                                    <InputText id="username" v-model="profileForm.username" class="w-full" />
+                                    <p v-if="profileForm.errors.username" class="text-red-500 text-sm mt-1">{{
+                                        profileForm.errors.username }}</p>
+                                </div>
+                                <div>
+                                    <label for="title"
+                                        class="block text-sm font-medium text-graphite-600 dark:text-graphite-400 mb-2">Job
+                                        Title</label>
+                                    <InputText id="title" v-model="profileForm.title" class="w-full"
+                                        placeholder="e.g. Senior Developer" />
+                                    <p v-if="profileForm.errors.title" class="text-red-500 text-sm mt-1">{{
+                                        profileForm.errors.title }}</p>
+                                </div>
+                            </div>
 
-                <div
-                    class="bg-white p-4 shadow sm:rounded-lg sm:p-8"
-                >
-                    <DeleteUserForm class="max-w-xl" />
-                </div>
-            </div>
+                            <div>
+                                <label for="bio"
+                                    class="block text-sm font-medium text-graphite-600 dark:text-graphite-400 mb-2">Bio</label>
+                                <Textarea id="bio" v-model="profileForm.bio" rows="5" class="w-full" />
+                                <p v-if="profileForm.errors.bio" class="text-red-500 text-sm mt-1">{{ profileForm.errors.bio
+                                    }}</p>
+                            </div>
+
+                            <div class="flex justify-end">
+                                <Button type="submit" label="Save Changes" :loading="profileForm.processing"
+                                    class="bg-iris-500 border-iris-500 text-white hover:bg-iris-600" />
+                            </div>
+                        </form>
+                    </TabPanel>
+
+                    <!-- Password Tab -->
+                    <TabPanel value="1">
+                        <form @submit.prevent="updatePassword" class="space-y-6 mt-6">
+                            <div>
+                                <label for="current_password"
+                                    class="block text-sm font-medium text-graphite-600 dark:text-graphite-400 mb-2">Current
+                                    Password</label>
+                                <InputText id="current_password" type="password" v-model="passwordForm.current_password"
+                                    class="w-full" />
+                                <p v-if="passwordForm.errors.current_password" class="text-red-500 text-sm mt-1">{{
+                                    passwordForm.errors.current_password }}</p>
+                            </div>
+                            <div>
+                                <label for="password"
+                                    class="block text-sm font-medium text-graphite-600 dark:text-graphite-400 mb-2">New
+                                    Password</label>
+                                <InputText id="password" type="password" v-model="passwordForm.password" class="w-full" />
+                                <p v-if="passwordForm.errors.password" class="text-red-500 text-sm mt-1">{{
+                                    passwordForm.errors.password }}</p>
+                            </div>
+                            <div>
+                                <label for="password_confirmation"
+                                    class="block text-sm font-medium text-graphite-600 dark:text-graphite-400 mb-2">Confirm
+                                    Password</label>
+                                <InputText id="password_confirmation" type="password"
+                                    v-model="passwordForm.password_confirmation" class="w-full" />
+                                <p v-if="passwordForm.errors.password_confirmation" class="text-red-500 text-sm mt-1">{{
+                                    passwordForm.errors.password_confirmation }}</p>
+                            </div>
+                            <div class="flex justify-end">
+                                <Button type="submit" label="Update Password" :loading="passwordForm.processing"
+                                    severity="secondary"
+                                    class="bg-graphite-800 border-graphite-800 text-white hover:bg-graphite-900" />
+                            </div>
+                        </form>
+                    </TabPanel>
+                </TabPanels>
+            </Tabs>
         </div>
-    </AuthenticatedLayout>
+    </DashboardLayout>
 </template>

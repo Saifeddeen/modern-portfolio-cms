@@ -1,3 +1,20 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@layer tailwind-base, primevue, tailwind-utilities;
+
+@layer tailwind-base {
+    @tailwind base;
+}
+
+@layer tailwind-utilities {
+    @tailwind components;
+    @tailwind utilities;
+}
+
+/* PrimeVue Dark Mode Configuration */
+.app-dark {
+    color-scheme: dark;
+}
+
+/* Ensure PrimeVue components inherit our Inter font */
+body {
+    font-family: 'Inter', sans-serif;
+}

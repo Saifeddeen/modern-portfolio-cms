@@ -1,32 +1,36 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title inertia>{{ config('app.name', 'Laravel') }}</title>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <!-- Fonts -->
-        <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+    <title inertia>{{ config('app.name', 'Laravel') }}</title>
 
-        <!-- Scripts -->
-        @routes
-        @vite(['resources/css/app.css', 'resources/js/app.ts'])
-        @inertiaHead
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.bunny.net">
+    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
 
-        <!-- Dark Mode Initialization (Prevent FOUC) -->
-        <script>
-            const isDark = localStorage.getItem('theme') === 'dark' || 
-                (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches);
-            
-            if (isDark) {
-                document.documentElement.classList.add('app-dark');
-            }
-        </script>
-    </head>
-    <body class="font-sans antialiased">
-        @inertia
-    </body>
+    <!-- Scripts -->
+    @routes
+    @vite(['resources/css/app.css', 'resources/js/app.ts'])
+    @inertiaHead
+
+    <!-- Dark Mode Initialization (Prevent FOUC) -->
+    <script>
+        const isDark = localStorage.getItem('theme') === 'dark' ||
+            (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches);
+
+        if (isDark) {
+            document.documentElement.classList.add('dark'); // For Tailwind
+            document.documentElement.classList.add('app-dark'); // For PrimeVue
+        }
+    </script>
+</head>
+
+<body class="font-sans antialiased">
+    @inertia
+</body>
+
 </html>

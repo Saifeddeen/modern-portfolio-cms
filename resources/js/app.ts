@@ -35,6 +35,6 @@ createInertiaApp({
         app.mount(el);
     },
     progress: {
-        color: '#4f46e5',
+        color: '#6366f1', // Iris 500
     },
 });
