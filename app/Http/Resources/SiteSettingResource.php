@@ -17,10 +17,11 @@ class SiteSettingResource extends JsonResource
         return [
             'title'     => $this->title,
             'logo'      => $this->logo,
-            'name'      => $this->name, // Returns all translations as {en: "...", ar: "..."}
+            'name'      => $this->name,
             'job_title' => $this->job_title,
             'bio'       => $this->bio,
             'avatar'    => $this->avatar,
+            'cv_link'   => $this->cv_link,
         ];
     }
 }

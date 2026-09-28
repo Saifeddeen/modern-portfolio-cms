@@ -19,6 +19,7 @@ return new class extends Migration
             $table->json('job_title')->nullable();
             $table->json('bio')->nullable();
             $table->string('avatar')->nullable();
+            $table->string('cv_link')->nullable();
             $table->timestamps();
         });
     }

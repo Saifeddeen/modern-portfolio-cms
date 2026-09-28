@@ -32,6 +32,7 @@ class SettingController extends Controller
             'bio' => ['nullable', 'array'],
             'logo' => ['nullable', 'image', 'max:2048'],
             'avatar' => ['nullable', 'image', 'max:2048'],
+            'cv_link' => ['nullable', 'file', 'mimes:pdf,doc,docx', 'max:5120'],
         ]);
 
         // Handle Translatable Fields
@@ -50,6 +51,12 @@ class SettingController extends Controller
         if ($request->hasFile('avatar')) {
             if ($settings->getRawOriginal('avatar')) Storage::disk('public')->delete($settings->getRawOriginal('avatar'));
             $settings->avatar = $request->file('avatar')->store('avatars', 'public');
+        }
+
+        // Handle CV File Upload
+        if ($request->hasFile('cv_link')) {
+            if ($settings->getRawOriginal('cv_link')) Storage::disk('public')->delete($settings->getRawOriginal('cv_link'));
+            $settings->cv_link = $request->file('cv_link')->store('cvs', 'public');
         }
 
         $settings->save();

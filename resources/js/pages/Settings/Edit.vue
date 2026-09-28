@@ -15,6 +15,7 @@ const props = defineProps<{
         title: string | null;
         logo: string | null;
         avatar: string | null;
+        cv_link: string | null;
         name: Record<string, string>;
         job_title: Record<string, string>;
         bio: Record<string, string>;
@@ -31,10 +32,12 @@ const form = useForm({
     bio: props.settings.bio || {},
     logo: null as File | null,
     avatar: null as File | null,
+    cv_link: null as File | null,
 });
 
 const onLogoSelect = (e: any) => { form.logo = e.files[0]; };
 const onAvatarSelect = (e: any) => { form.avatar = e.files[0]; };
+const onCvSelect = (e: any) => { form.cv_link = e.files[0]; };
 
 const submit = () => {
     confirm.require({
@@ -137,6 +140,17 @@ const submit = () => {
                         <img v-if="settings.avatar" :src="settings.avatar"
                             class="mt-2 h-12 w-12 rounded-full object-cover" />
                     </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-graphite-600 dark:text-graphite-400 mb-2">CV / Resume
+                        (PDF/Doc)</label>
+                    <FileUpload mode="basic" name="cv_link" accept=".pdf,.doc,.docx" :maxFileSize="5000000"
+                        @select="onCvSelect" chooseLabel="Upload CV" class="w-full" />
+                    <a v-if="settings.cv_link" :href="settings.cv_link" target="_blank"
+                        class="mt-2 inline-block text-sm text-iris-500 hover:underline">
+                        View Current CV
+                    </a>
                 </div>
 
                 <div class="flex justify-end">

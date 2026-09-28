@@ -16,6 +16,7 @@ class SiteSetting extends Model
         'job_title',
         'bio',
         'avatar',
+        'cv_link',
     ];
 
     // Define translatable fields
@@ -32,6 +33,11 @@ class SiteSetting extends Model
     }
 
     public function getAvatarAttribute($value): ?string
+    {
+        return $value ? asset('storage/' . $value) : null;
+    }
+
+    public function getCvLinkAttribute($value): ?string
     {
         return $value ? asset('storage/' . $value) : null;
     }
