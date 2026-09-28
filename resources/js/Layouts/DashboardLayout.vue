@@ -14,7 +14,7 @@ const navigation = [
     { name: 'Profile', route: 'profile.edit', icon: User },
     { name: 'Projects', route: 'dashboard', icon: Folder },
     { name: 'Experience', route: 'dashboard', icon: Briefcase },
-    { name: 'Settings', route: 'dashboard', icon: Settings },
+    { name: 'Settings', route: 'settings.edit', icon: Settings },
 ];
 
 onMounted(() => {
