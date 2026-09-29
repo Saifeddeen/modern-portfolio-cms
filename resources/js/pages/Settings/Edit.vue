@@ -50,7 +50,6 @@ const submit = () => {
         accept: () => {
             form.post(route('settings.update'), {
                 preserveScroll: true,
-                _method: 'put',
                 onSuccess: () => {
                     toast.add({
                         severity: 'success',

@@ -123,7 +123,7 @@ const saveSkill = () => {
                 }
             };
 
-            if (isEditing.value) {
+            if (isEditing.value && form.id) {
                 form.put(route('skills.update', form.id), options);
             } else {
                 form.post(route('skills.store'), options);
@@ -185,7 +185,7 @@ const deleteSkill = (skill: any) => {
                 <Column header="Name">
                     <template #body="slotProps">
                         <span class="font-medium text-graphite-800 dark:text-white">{{ slotProps.data.name?.en || 'N/A'
-                        }}</span>
+                            }}</span>
                     </template>
                 </Column>
                 <Column header="Short Description">
@@ -282,7 +282,7 @@ const deleteSkill = (skill: any) => {
                         <p class="text-xs text-graphite-500 mb-2">Vue Iconify</p>
                         <p class="text-sm font-medium text-graphite-800 dark:text-white">{{ viewSkillData.vue_iconify ||
                             'N/A'
-                        }}</p>
+                            }}</p>
                     </div>
                     <div class="text-center">
                         <p class="text-xs text-graphite-500 mb-2">SVG Icon</p>
@@ -297,7 +297,7 @@ const deleteSkill = (skill: any) => {
                     <div>
                         <p class="text-xs text-graphite-500">Name</p>
                         <p class="font-medium text-graphite-800 dark:text-white">{{ viewSkillData.name?.[code] || 'N/A'
-                        }}</p>
+                            }}</p>
                     </div>
                     <div>
                         <p class="text-xs text-graphite-500">Short Description</p>
