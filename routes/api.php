@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\SiteSettingController;
+use App\Http\Controllers\Api\SkillController;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,5 +16,4 @@ use App\Http\Controllers\Api\SiteSettingController;
 */
 
 Route::get('/settings', [SiteSettingController::class, 'index'])->name('api.settings.index');
-
-// We will add more API routes here as we build new features (Projects, Experience, etc.)
+Route::get('/skills', [SkillController::class, 'index'])->name('api.skills.index');
