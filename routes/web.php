@@ -3,6 +3,7 @@
 use App\Http\Controllers\Dashboard\TechnologyController;
 use App\Http\Controllers\Dashboard\ServiceController;
 use App\Http\Controllers\Dashboard\SettingController;
+use App\Http\Controllers\Dashboard\SkillController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -29,6 +30,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/settings', [SettingController::class, 'update'])->name('settings.update');
     Route::resource('technologies', TechnologyController::class)->except(['show', 'create', 'edit']);
     Route::resource('services', ServiceController::class)->except(['show', 'create', 'edit']);
+    Route::resource('skills', SkillController::class)->except(['show', 'create', 'edit']);
 });
 
 require __DIR__ . '/auth.php';

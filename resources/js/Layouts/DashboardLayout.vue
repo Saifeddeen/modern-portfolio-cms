@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { Link } from '@inertiajs/vue3';
-import { Menu, Moon, Sun, LayoutDashboard, User, Folder, Briefcase, Layers, Settings, LogOut } from '@lucide/vue';
+import { Menu, Moon, Sun, LayoutDashboard, User, Settings, LogOut, Code, Dumbbell, Handshake } from '@lucide/vue';
 // Import the global components
 import Toast from 'primevue/toast';
 import ConfirmDialog from 'primevue/confirmdialog';
@@ -12,8 +12,9 @@ const isDark = ref(false);
 const navigation = [
     { name: 'Dashboard', route: 'dashboard', icon: LayoutDashboard },
     { name: 'Profile', route: 'profile.edit', icon: User },
-    { name: 'Technologies', route: 'technologies.index', icon: Briefcase },
-    { name: 'Services', route: 'services.index', icon: Layers },
+    { name: 'Technologies', route: 'technologies.index', icon: Code },
+    { name: 'Services', route: 'services.index', icon: Handshake },
+    { name: 'Skills', route: 'skills.index', icon: Dumbbell },
     { name: 'Settings', route: 'settings.edit', icon: Settings },
 ];
 
