@@ -10,7 +10,7 @@ const toast = useToast();
 const confirm = useConfirm();
 
 const props = defineProps<{
-    skills: Array<any>;
+    technologies: Array<any>;
     locales?: Record<string, string>;
 }>();
 
@@ -22,7 +22,7 @@ const firstLocale = Object.keys(locales)[0];
 const dialogVisible = ref(false);
 const viewDialogVisible = ref(false);
 const isEditing = ref(false);
-const viewSkillData = ref<any>(null);
+const viewTechnologyData = ref<any>(null);
 
 // Tab State
 const activeLocale = ref(firstLocale);
@@ -65,23 +65,23 @@ const openCreateDialog = () => {
     dialogVisible.value = true;
 };
 
-const openEditDialog = (skill: any) => {
+const openEditDialog = (technology: any) => {
     isEditing.value = true;
-    form.id = skill.id;
-    form.vue_iconify = skill.vue_iconify || '';
-    form.svg_icon = skill.svg_icon || '';
-    form.name = skill.name || {};
-    form.short_description = skill.short_description || {};
+    form.id = technology.id;
+    form.vue_iconify = technology.vue_iconify || '';
+    form.svg_icon = technology.svg_icon || '';
+    form.name = technology.name || {};
+    form.short_description = technology.short_description || {};
     activeLocale.value = firstLocale;
     dialogVisible.value = true;
 };
 
-const openViewDialog = (skill: any) => {
-    viewSkillData.value = skill;
+const openViewDialog = (technology: any) => {
+    viewTechnologyData.value = technology;
     viewDialogVisible.value = true;
 };
 
-const saveSkill = () => {
+const saveTechnology = () => {
     if (!isSvgValid.value) {
         toast.add({
             severity: 'error',
@@ -93,7 +93,7 @@ const saveSkill = () => {
     }
 
     confirm.require({
-        message: isEditing.value ? 'Save changes to this skill?' : 'Create this skill?',
+        message: isEditing.value ? 'Save changes to this technology?' : 'Create this technology?',
         header: 'Save Confirmation',
         icon: 'pi pi-save',
         acceptLabel: 'Yes, Save',
@@ -107,7 +107,7 @@ const saveSkill = () => {
                     toast.add({
                         severity: 'success',
                         summary: 'Success',
-                        detail: `Skill ${isEditing.value ? 'updated' : 'created'} successfully.`,
+                        detail: `Technology ${isEditing.value ? 'updated' : 'created'} successfully.`,
                         life: 3000
                     });
                 },
@@ -124,30 +124,30 @@ const saveSkill = () => {
             };
 
             if (isEditing.value && form.id) {
-                form.put(route('skills.update', form.id), options);
+                form.put(route('technologies.update', form.id), options);
             } else {
-                form.post(route('skills.store'), options);
+                form.post(route('technologies.store'), options);
             }
         }
     });
 };
 
-const deleteSkill = (skill: any) => {
+const deleteTechnology = (technology: any) => {
     confirm.require({
-        message: `Are you sure you want to delete this skill?`,
+        message: `Are you sure you want to delete this technology?`,
         header: 'Delete Confirmation',
         icon: 'pi pi-exclamation-triangle',
         acceptLabel: 'Yes, Delete',
         rejectLabel: 'No, Cancel',
         acceptClass: 'p-button-danger',
         accept: () => {
-            router.delete(route('skills.destroy', skill.id), {
+            router.delete(route('technologies.destroy', technology.id), {
                 preserveScroll: true,
                 onSuccess: () => {
                     toast.add({
                         severity: 'success',
                         summary: 'Deleted',
-                        detail: 'Skill deleted successfully.',
+                        detail: 'Technology deleted successfully.',
                         life: 3000
                     });
                 }
@@ -159,17 +159,17 @@ const deleteSkill = (skill: any) => {
 
 <template>
 
-    <Head title="Skills" />
+    <Head title="Technologies" />
 
     <DashboardLayout>
         <div
             class="bg-white dark:bg-graphite-950 p-6 rounded-xl shadow-soft border border-graphite-200 dark:border-graphite-800">
             <div class="flex items-center justify-between mb-6">
-                <h1 class="text-xl font-semibold text-graphite-800 dark:text-white">Skills Management</h1>
-                <Button label="Add New Skill" icon="pi pi-plus" @click="openCreateDialog" />
+                <h1 class="text-xl font-semibold text-graphite-800 dark:text-white">Technologies Management</h1>
+                <Button label="Add New Technology" icon="pi pi-plus" @click="openCreateDialog" />
             </div>
 
-            <DataTable :value="props.skills" tableStyle="min-width: 50rem">
+            <DataTable :value="props.technologies" tableStyle="min-width: 50rem">
                 <Column field="id" header="ID" style="width: 5%"></Column>
                 <Column header="Icon" style="width: 10%">
                     <template #body="slotProps">
@@ -201,7 +201,7 @@ const deleteSkill = (skill: any) => {
                             <Button icon="pi pi-pencil" severity="info" text rounded
                                 @click="openEditDialog(slotProps.data)" />
                             <Button icon="pi pi-trash" severity="danger" text rounded
-                                @click="deleteSkill(slotProps.data)" />
+                                @click="deleteTechnology(slotProps.data)" />
                         </div>
                     </template>
                 </Column>
@@ -209,7 +209,7 @@ const deleteSkill = (skill: any) => {
         </div>
 
         <!-- Create/Edit Dialog -->
-        <Dialog v-model:visible="dialogVisible" :header="isEditing ? 'Edit Skill' : 'Add New Skill'" modal
+        <Dialog v-model:visible="dialogVisible" :header="isEditing ? 'Edit Technology' : 'Add New Technology'" modal
             class="p-fluid w-[40rem]">
             <div class="space-y-6 pt-4">
                 <!-- Language Switcher -->
@@ -270,23 +270,24 @@ const deleteSkill = (skill: any) => {
 
             <template #footer>
                 <Button label="Cancel" icon="pi pi-times" @click="dialogVisible = false" text />
-                <Button label="Save" icon="pi pi-check" @click="saveSkill" :loading="form.processing" />
+                <Button label="Save" icon="pi pi-check" @click="saveTechnology" :loading="form.processing" />
             </template>
         </Dialog>
 
         <!-- View Details Dialog -->
-        <Dialog v-model:visible="viewDialogVisible" header="Skill Details" modal class="p-fluid w-[40rem]">
-            <div v-if="viewSkillData" class="space-y-6 pt-4">
+        <Dialog v-model:visible="viewDialogVisible" header="Technology Details" modal class="p-fluid w-[40rem]">
+            <div v-if="viewTechnologyData" class="space-y-6 pt-4">
                 <div class="flex items-center gap-8 pb-4 border-b border-graphite-200 dark:border-graphite-700">
                     <div class="text-center">
                         <p class="text-xs text-graphite-500 mb-2">Vue Iconify</p>
-                        <p class="text-sm font-medium text-graphite-800 dark:text-white">{{ viewSkillData.vue_iconify ||
+                        <p class="text-sm font-medium text-graphite-800 dark:text-white">{{
+                            viewTechnologyData.vue_iconify ||
                             'N/A'
                             }}</p>
                     </div>
                     <div class="text-center">
                         <p class="text-xs text-graphite-500 mb-2">SVG Icon</p>
-                        <div v-if="viewSkillData.svg_icon" v-html="viewSkillData.svg_icon"
+                        <div v-if="viewTechnologyData.svg_icon" v-html="viewTechnologyData.svg_icon"
                             class="w-8 h-8 inline-block text-graphite-700 dark:text-white"></div>
                         <p v-else class="text-sm font-medium text-graphite-800 dark:text-white">N/A</p>
                     </div>
@@ -296,13 +297,14 @@ const deleteSkill = (skill: any) => {
                     <h3 class="font-semibold text-iris-500 text-sm uppercase">{{ label }}</h3>
                     <div>
                         <p class="text-xs text-graphite-500">Name</p>
-                        <p class="font-medium text-graphite-800 dark:text-white">{{ viewSkillData.name?.[code] || 'N/A'
+                        <p class="font-medium text-graphite-800 dark:text-white">{{ viewTechnologyData.name?.[code] ||
+                            'N/A'
                             }}</p>
                     </div>
                     <div>
                         <p class="text-xs text-graphite-500">Short Description</p>
                         <p class="text-sm text-graphite-700 dark:text-graphite-300">{{
-                            viewSkillData.short_description?.[code]
+                            viewTechnologyData.short_description?.[code]
                             || 'N/A' }}</p>
                     </div>
                 </div>

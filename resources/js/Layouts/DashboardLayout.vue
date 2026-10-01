@@ -12,7 +12,7 @@ const isDark = ref(false);
 const navigation = [
     { name: 'Dashboard', route: 'dashboard', icon: LayoutDashboard },
     { name: 'Profile', route: 'profile.edit', icon: User },
-    { name: 'Skills', route: 'skills.index', icon: Briefcase },
+    { name: 'Technologies', route: 'technologies.index', icon: Briefcase },
     { name: 'Services', route: 'services.index', icon: Layers },
     { name: 'Settings', route: 'settings.edit', icon: Settings },
 ];

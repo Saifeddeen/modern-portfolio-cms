@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\Dashboard\SkillController;
+use App\Http\Controllers\Dashboard\TechnologyController;
 use App\Http\Controllers\Dashboard\ServiceController;
 use App\Http\Controllers\Dashboard\SettingController;
 use App\Http\Controllers\ProfileController;
@@ -27,7 +27,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::get('/settings', [SettingController::class, 'edit'])->name('settings.edit');
     Route::post('/settings', [SettingController::class, 'update'])->name('settings.update');
-    Route::resource('skills', SkillController::class)->except(['show', 'create', 'edit']);
+    Route::resource('technologies', TechnologyController::class)->except(['show', 'create', 'edit']);
     Route::resource('services', ServiceController::class)->except(['show', 'create', 'edit']);
 });
 
