@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Spatie\Translatable\HasTranslations;
 
 class Skill extends Model
@@ -20,4 +21,9 @@ class Skill extends Model
         'title',
         'description',
     ];
+
+    public function projects(): BelongsToMany
+    {
+        return $this->belongsToMany(Project::class);
+    }
 }

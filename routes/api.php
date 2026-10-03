@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\ProjectController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\SiteSettingController;
 use App\Http\Controllers\Api\TechnologyController;
@@ -21,3 +22,6 @@ Route::get('/settings', [SiteSettingController::class, 'index'])->name('api.sett
 Route::get('/technologies', [TechnologyController::class, 'index'])->name('api.technologies.index');
 Route::get('/services', [ServiceController::class, 'index'])->name('api.services.index');
 Route::get('/skills', [SkillController::class, 'index'])->name('api.skills.index');
+Route::get('/projects/featured', [ProjectController::class, 'featured'])->name('api.projects.featured');
+Route::get('/projects', [ProjectController::class, 'index'])->name('api.projects.index');
+Route::get('/projects/{slug}', [ProjectController::class, 'show'])->name('api.projects.show');

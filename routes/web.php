@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Dashboard\ProjectController;
 use App\Http\Controllers\Dashboard\TechnologyController;
 use App\Http\Controllers\Dashboard\ServiceController;
 use App\Http\Controllers\Dashboard\SettingController;
@@ -31,6 +32,9 @@ Route::middleware('auth')->group(function () {
     Route::resource('technologies', TechnologyController::class)->except(['show', 'create', 'edit']);
     Route::resource('services', ServiceController::class)->except(['show', 'create', 'edit']);
     Route::resource('skills', SkillController::class)->except(['show', 'create', 'edit']);
+    Route::resource('projects', ProjectController::class)->except(['show', 'create', 'edit']);
+    Route::get('/projects/{project}', [ProjectController::class, 'show'])->name('projects.show');
+    Route::post('/projects/{project}/gallery', [ProjectController::class, 'storeGallery'])->name('projects.gallery.store');
 });
 
 require __DIR__ . '/auth.php';
