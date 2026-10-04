@@ -1,13 +1,19 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
-import { Link } from '@inertiajs/vue3';
-import { Menu, Moon, Sun, LayoutDashboard, User, Settings, LogOut, Code, Dumbbell, Handshake, Folder } from '@lucide/vue';
+import { ref, onMounted, computed } from 'vue';
+import { Link, usePage } from '@inertiajs/vue3';
+import { Menu, Moon, Sun, LayoutDashboard, User, Settings, LogOut, Code, Dumbbell, Handshake, Folder, Mail } from '@lucide/vue';
 // Import the global components
 import Toast from 'primevue/toast';
 import ConfirmDialog from 'primevue/confirmdialog';
+import { useToast } from 'primevue/usetoast';
+
+const page = usePage();
+const toast = useToast();
 
 const sidebarOpen = ref(false);
 const isDark = ref(false);
+
+const unreadCount = computed(() => page.props.unreadMessagesCount as number);
 
 const navigation = [
     { name: 'Dashboard', route: 'dashboard', icon: LayoutDashboard },
@@ -16,11 +22,28 @@ const navigation = [
     { name: 'Technologies', route: 'technologies.index', icon: Code },
     { name: 'Services', route: 'services.index', icon: Handshake },
     { name: 'Skills', route: 'skills.index', icon: Dumbbell },
+    { name: 'Messages', route: 'messages.index', icon: Mail },
     { name: 'Settings', route: 'settings.edit', icon: Settings },
 ];
 
 onMounted(() => {
     isDark.value = document.documentElement.classList.contains('app-dark');
+
+    if (window.Echo) {
+        window.Echo.private('dashboard')
+            .listen('MessageReceived', (e: any) => {
+                // Increase the badge count dynamically
+                page.props.unreadMessagesCount = (page.props.unreadMessagesCount as number) + 1;
+
+                // Show Toast notification
+                toast.add({
+                    severity: 'info',
+                    summary: 'New Message',
+                    detail: `${e.name}: ${e.subject}`,
+                    life: 5000
+                });
+            });
+    }
 });
 
 const toggleDarkMode = () => {
@@ -58,6 +81,11 @@ const toggleDarkMode = () => {
                     :class="{ 'bg-iris-50 text-iris-600 dark:bg-iris-900/30 dark:text-iris-400': route().current(item.route) }">
                     <component :is="item.icon" class="w-5 h-5 mr-3" />
                     {{ item.name }}
+                    <!-- Unread Badge for Messages -->
+                    <span v-if="item.name === 'Messages' && unreadCount > 0"
+                        class="bg-grapefruit_pink-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">
+                        {{ unreadCount }}
+                    </span>
                 </Link>
             </nav>
             <div class="absolute bottom-0 w-full p-4 border-t border-graphite-200 dark:border-graphite-800">

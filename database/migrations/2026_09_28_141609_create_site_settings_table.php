@@ -16,10 +16,13 @@ return new class extends Migration
             $table->string('title')->nullable();
             $table->string('logo')->nullable();
             $table->json('name')->nullable();
+            $table->string('email')->nullable();
             $table->json('job_title')->nullable();
             $table->json('bio')->nullable();
             $table->string('avatar')->nullable();
             $table->string('cv_link')->nullable();
+            $table->string('phone')->nullable();
+            $table->json('address')->nullable();
             $table->timestamps();
         });
     }

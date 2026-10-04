@@ -28,18 +28,21 @@ class SettingController extends Controller
         $validated = $request->validate([
             'title' => ['nullable', 'string', 'max:255'],
             'name' => ['required', 'array'],
+            'email' => ['nullable', 'email'],
             'job_title' => ['required', 'array'],
             'bio' => ['nullable', 'array'],
             'logo' => ['nullable', 'image', 'max:2048'],
             'avatar' => ['nullable', 'image', 'max:2048'],
             'cv_link' => ['nullable', 'file', 'mimes:pdf,doc,docx', 'max:5120'],
+            'phone' => ['nullable', 'string', 'max:255'],
+            'address' => ['nullable', 'array']
         ]);
 
         // Handle Translatable Fields
         $settings->setTranslations('name', $validated['name']);
         $settings->setTranslations('job_title', $validated['job_title']);
         $settings->setTranslations('bio', $validated['bio'] ?? []);
-
+        $settings->email = $validated['email'];
         $settings->title = $validated['title'];
 
         // Handle File Uploads
@@ -58,6 +61,9 @@ class SettingController extends Controller
             if ($settings->getRawOriginal('cv_link')) Storage::disk('public')->delete($settings->getRawOriginal('cv_link'));
             $settings->cv_link = $request->file('cv_link')->store('cvs', 'public');
         }
+
+        $settings->phone = $validated['phone'];
+        $settings->setTranslations('address', $validated['address'] ?? []);
 
         $settings->save();
 

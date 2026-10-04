@@ -13,20 +13,22 @@ class SiteSetting extends Model
         'title',
         'logo',
         'name',
+        'email',
         'job_title',
         'bio',
         'avatar',
         'cv_link',
+        'phone',
+        'address'
     ];
 
-    // Define translatable fields
     public array $translatable = [
         'name',
         'job_title',
         'bio',
+        'address'
     ];
 
-    // Accessors to get full URL for files
     public function getLogoAttribute($value): ?string
     {
         return $value ? asset('storage/' . $value) : null;

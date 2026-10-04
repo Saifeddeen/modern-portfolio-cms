@@ -22,6 +22,9 @@ class SiteSettingResource extends JsonResource
             'bio'       => $this->bio,
             'avatar'    => $this->avatar,
             'cv_link'   => $this->cv_link,
+            'phone'     => $this->phone,
+            'address'   => $this->address,
+            'email'     => $this->email,
         ];
     }
 }

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Dashboard\MessageController;
 use App\Http\Controllers\Dashboard\ProjectController;
 use App\Http\Controllers\Dashboard\TechnologyController;
 use App\Http\Controllers\Dashboard\ServiceController;
@@ -35,6 +36,9 @@ Route::middleware('auth')->group(function () {
     Route::resource('projects', ProjectController::class)->except(['show', 'create', 'edit']);
     Route::get('/projects/{project}', [ProjectController::class, 'show'])->name('projects.show');
     Route::post('/projects/{project}/gallery', [ProjectController::class, 'storeGallery'])->name('projects.gallery.store');
+    Route::get('/messages', [MessageController::class, 'index'])->name('messages.index');
+    Route::put('/messages/{message}/mark-as-read', [MessageController::class, 'markAsRead'])->name('messages.markAsRead');
+    Route::delete('/messages/{message}', [MessageController::class, 'destroy'])->name('messages.destroy');
 });
 
 require __DIR__ . '/auth.php';

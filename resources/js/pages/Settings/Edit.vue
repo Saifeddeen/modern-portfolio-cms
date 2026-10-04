@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Button, InputText, Textarea, FileUpload } from 'primevue';
+import { Button, InputText, Textarea, FileUpload, Tabs, TabList, Tab, TabPanels, TabPanel } from 'primevue';
 import { useToast } from 'primevue/usetoast';
 import { useConfirm } from 'primevue/useconfirm';
 import DashboardLayout from '@/Layouts/DashboardLayout.vue';
@@ -16,20 +16,27 @@ const props = defineProps<{
         logo: string | null;
         avatar: string | null;
         cv_link: string | null;
+        phone: string | null; // Added
+        email: string | null;
         name: Record<string, string>;
         job_title: Record<string, string>;
         bio: Record<string, string>;
+        address: Record<string, string>; // Added
     };
     locales: Record<string, string>;
 }>();
 
+const activeTab = ref('0'); // '0' for Main Info, '1' for Contact Info
 const activeLocale = ref(Object.keys(props.locales)[0]);
 
 const form = useForm({
     title: props.settings.title,
+    email: props.settings.email || '',
+    phone: props.settings.phone || '',
     name: props.settings.name || {},
     job_title: props.settings.job_title || {},
     bio: props.settings.bio || {},
+    address: props.settings.address || {}, // Added
     logo: null as File | null,
     avatar: null as File | null,
     cv_link: null as File | null,
@@ -83,77 +90,144 @@ const submit = () => {
 
             <form @submit.prevent="submit" class="space-y-8">
 
-                <!-- Language Switcher -->
-                <div class="flex gap-2 border-b border-graphite-200 dark:border-graphite-800 pb-4">
-                    <Button v-for="(label, code) in locales" :key="code" :label="label" @click="activeLocale = code"
-                        :text="activeLocale !== code" :severity="activeLocale === code ? 'primary' : 'secondary'"
-                        size="small" />
-                </div>
+                <!-- Main Tabs (Main Info vs Contact Info) -->
+                <Tabs v-model:value="activeTab">
+                    <TabList>
+                        <Tab value="0">Main Info</Tab>
+                        <Tab value="1">Contact Info</Tab>
+                    </TabList>
+                    <TabPanels>
 
-                <!-- Non-translatable fields -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                        <label class="block text-sm font-medium text-graphite-600 dark:text-graphite-400 mb-2">Site
-                            Title</label>
-                        <InputText v-model="form.title" class="w-full" />
-                    </div>
-                </div>
+                        <!-- Tab 0: Main Info -->
+                        <TabPanel value="0">
+                            <div class="space-y-8 pt-4">
+                                <!-- Language Switcher -->
+                                <div class="flex gap-2 border-b border-graphite-200 dark:border-graphite-800 pb-4">
+                                    <Button v-for="(label, code) in locales" :key="code" :label="label"
+                                        @click="activeLocale = code" :text="activeLocale !== code"
+                                        :severity="activeLocale === code ? 'primary' : 'secondary'" size="small" />
+                                </div>
 
-                <!-- Translatable Fields -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div v-for="(label, code) in locales" :key="code" v-show="activeLocale === code">
-                        <label class="block text-sm font-medium text-graphite-600 dark:text-graphite-400 mb-2">Name ({{
-                            label }})</label>
-                        <InputText v-model="form.name[code]" class="w-full" />
-                    </div>
+                                <!-- Non-translatable fields -->
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div>
+                                        <label
+                                            class="block text-sm font-medium text-graphite-600 dark:text-graphite-400 mb-2">Site
+                                            Title</label>
+                                        <InputText v-model="form.title" class="w-full" />
+                                    </div>
+                                </div>
 
-                    <div v-for="(label, code) in locales" :key="code" v-show="activeLocale === code">
-                        <label class="block text-sm font-medium text-graphite-600 dark:text-graphite-400 mb-2">Job Title
-                            ({{ label }})</label>
-                        <InputText v-model="form.job_title[code]" class="w-full" />
-                    </div>
-                </div>
+                                <!-- Translatable Fields -->
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div v-for="(label, code) in locales" :key="code" v-show="activeLocale === code">
+                                        <label
+                                            class="block text-sm font-medium text-graphite-600 dark:text-graphite-400 mb-2">Name
+                                            ({{ label }})</label>
+                                        <InputText v-model="form.name[code]" class="w-full" />
+                                    </div>
 
-                <div>
-                    <div v-for="(label, code) in locales" :key="code" v-show="activeLocale === code">
-                        <label class="block text-sm font-medium text-graphite-600 dark:text-graphite-400 mb-2">Bio ({{
-                            label }})</label>
-                        <Textarea v-model="form.bio[code]" rows="5" class="w-full" />
-                    </div>
-                </div>
+                                    <div v-for="(label, code) in locales" :key="code" v-show="activeLocale === code">
+                                        <label
+                                            class="block text-sm font-medium text-graphite-600 dark:text-graphite-400 mb-2">Job
+                                            Title ({{ label }})</label>
+                                        <InputText v-model="form.job_title[code]" class="w-full" />
+                                    </div>
+                                </div>
 
-                <!-- File Uploads -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                        <label
-                            class="block text-sm font-medium text-graphite-600 dark:text-graphite-400 mb-2">Logo</label>
-                        <FileUpload mode="basic" name="logo" accept="image/*" :maxFileSize="2000000"
-                            @select="onLogoSelect" chooseLabel="Upload Logo" class="w-full" />
-                        <img v-if="settings.logo" :src="settings.logo" class="mt-2 h-12 w-auto object-contain" />
-                    </div>
-                    <div>
-                        <label
-                            class="block text-sm font-medium text-graphite-600 dark:text-graphite-400 mb-2">Avatar</label>
-                        <FileUpload mode="basic" name="avatar" accept="image/*" :maxFileSize="2000000"
-                            @select="onAvatarSelect" chooseLabel="Upload Avatar" class="w-full" />
-                        <img v-if="settings.avatar" :src="settings.avatar"
-                            class="mt-2 h-12 w-12 rounded-full object-cover" />
-                    </div>
-                </div>
+                                <div>
+                                    <div v-for="(label, code) in locales" :key="code" v-show="activeLocale === code">
+                                        <label
+                                            class="block text-sm font-medium text-graphite-600 dark:text-graphite-400 mb-2">Bio
+                                            ({{ label }})</label>
+                                        <Textarea v-model="form.bio[code]" rows="5" class="w-full" />
+                                    </div>
+                                </div>
 
-                <div>
-                    <label class="block text-sm font-medium text-graphite-600 dark:text-graphite-400 mb-2">CV / Resume
-                        (PDF/Doc)</label>
-                    <FileUpload mode="basic" name="cv_link" accept=".pdf,.doc,.docx" :maxFileSize="5000000"
-                        @select="onCvSelect" chooseLabel="Upload CV" class="w-full" />
-                    <a v-if="settings.cv_link" :href="settings.cv_link" target="_blank"
-                        class="mt-2 inline-block text-sm text-iris-500 hover:underline">
-                        View Current CV
-                    </a>
-                </div>
+                                <!-- File Uploads -->
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div>
+                                        <label
+                                            class="block text-sm font-medium text-graphite-600 dark:text-graphite-400 mb-2">Logo</label>
+                                        <FileUpload mode="basic" name="logo" accept="image/*" :maxFileSize="2000000"
+                                            @select="onLogoSelect" chooseLabel="Upload Logo" class="w-full" />
+                                        <img v-if="settings.logo" :src="settings.logo"
+                                            class="mt-2 h-12 w-auto object-contain" />
+                                    </div>
+                                    <div>
+                                        <label
+                                            class="block text-sm font-medium text-graphite-600 dark:text-graphite-400 mb-2">Avatar</label>
+                                        <FileUpload mode="basic" name="avatar" accept="image/*" :maxFileSize="2000000"
+                                            @select="onAvatarSelect" chooseLabel="Upload Avatar" class="w-full" />
+                                        <img v-if="settings.avatar" :src="settings.avatar"
+                                            class="mt-2 h-12 w-12 rounded-full object-cover" />
+                                    </div>
+                                </div>
 
-                <div class="flex justify-end">
-                    <Button type="submit" label="Save Settings" :loading="form.processing" />
+                                <div>
+                                    <label
+                                        class="block text-sm font-medium text-graphite-600 dark:text-graphite-400 mb-2">CV
+                                        / Resume (PDF/Doc)</label>
+                                    <FileUpload mode="basic" name="cv_link" accept=".pdf,.doc,.docx"
+                                        :maxFileSize="5000000" @select="onCvSelect" chooseLabel="Upload CV"
+                                        class="w-full" />
+                                    <a v-if="settings.cv_link" :href="settings.cv_link" target="_blank"
+                                        class="mt-2 inline-block text-sm text-iris-500 hover:underline">
+                                        View Current CV
+                                    </a>
+                                </div>
+                            </div>
+                        </TabPanel>
+
+                        <!-- Tab 1: Contact Info -->
+                        <TabPanel value="1">
+                            <div class="space-y-8 pt-4">
+                                <!-- Language Switcher (for Address) -->
+                                <div class="flex gap-2 border-b border-graphite-200 dark:border-graphite-800 pb-4">
+                                    <Button v-for="(label, code) in locales" :key="code" :label="label"
+                                        @click="activeLocale = code" :text="activeLocale !== code"
+                                        :severity="activeLocale === code ? 'primary' : 'secondary'" size="small" />
+                                </div>
+
+                                <!-- Non-translatable Phone -->
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div>
+                                        <label
+                                            class="block text-sm font-medium text-graphite-600 dark:text-graphite-400 mb-2">
+                                            Email
+                                        </label>
+                                        <InputText type="email" v-model="form.email" class="w-full"
+                                            placeholder="email@example.com" />
+                                    </div>
+                                </div>
+
+                                <!-- Non-translatable Phone -->
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div>
+                                        <label
+                                            class="block text-sm font-medium text-graphite-600 dark:text-graphite-400 mb-2">Phone
+                                            Number</label>
+                                        <InputText v-model="form.phone" class="w-full" placeholder="+1234567890" />
+                                    </div>
+                                </div>
+
+                                <!-- Translatable Address -->
+                                <div>
+                                    <div v-for="(label, code) in locales" :key="code" v-show="activeLocale === code">
+                                        <label
+                                            class="block text-sm font-medium text-graphite-600 dark:text-graphite-400 mb-2">Address
+                                            ({{ label }})</label>
+                                        <Textarea v-model="form.address[code]" rows="3" class="w-full" />
+                                    </div>
+                                </div>
+                            </div>
+                        </TabPanel>
+
+                    </TabPanels>
+                </Tabs>
+
+                <div class="flex justify-end pt-4 border-t border-graphite-200 dark:border-graphite-800">
+                    <Button type="submit" label="Save Settings" icon="pi pi-save" :loading="form.processing" />
                 </div>
             </form>
         </div>
