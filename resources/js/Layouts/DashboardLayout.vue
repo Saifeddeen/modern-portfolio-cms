@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue';
 import { Link, usePage } from '@inertiajs/vue3';
-import { Menu, Moon, Sun, LayoutDashboard, User, Settings, LogOut, Code, Dumbbell, Handshake, Folder, Mail } from '@lucide/vue';
+import { Menu, Moon, Sun, LayoutDashboard, User, Settings, LogOut, Code, Dumbbell, Handshake, Folder, Mail, Share2 } from '@lucide/vue';
 // Import the global components
 import Toast from 'primevue/toast';
 import ConfirmDialog from 'primevue/confirmdialog';
@@ -22,6 +22,7 @@ const navigation = [
     { name: 'Technologies', route: 'technologies.index', icon: Code },
     { name: 'Services', route: 'services.index', icon: Handshake },
     { name: 'Skills', route: 'skills.index', icon: Dumbbell },
+    { name: 'Social Links', route: 'social-links.index', icon: Share2 },
     { name: 'Messages', route: 'messages.index', icon: Mail },
     { name: 'Settings', route: 'settings.edit', icon: Settings },
 ];

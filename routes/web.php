@@ -6,6 +6,7 @@ use App\Http\Controllers\Dashboard\TechnologyController;
 use App\Http\Controllers\Dashboard\ServiceController;
 use App\Http\Controllers\Dashboard\SettingController;
 use App\Http\Controllers\Dashboard\SkillController;
+use App\Http\Controllers\Dashboard\SocialLinkController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -39,6 +40,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/messages', [MessageController::class, 'index'])->name('messages.index');
     Route::put('/messages/{message}/mark-as-read', [MessageController::class, 'markAsRead'])->name('messages.markAsRead');
     Route::delete('/messages/{message}', [MessageController::class, 'destroy'])->name('messages.destroy');
+    Route::resource('social-links', SocialLinkController::class)->except(['show', 'create', 'edit']);
 });
 
 require __DIR__ . '/auth.php';

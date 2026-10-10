@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\SiteSettingController;
 use App\Http\Controllers\Api\TechnologyController;
 use App\Http\Controllers\Api\ServiceController;
 use App\Http\Controllers\Api\SkillController;
+use App\Http\Controllers\Api\SocialLinkController;
 
 /*
 |--------------------------------------------------------------------------
@@ -27,3 +28,4 @@ Route::get('/projects/featured', [ProjectController::class, 'featured'])->name('
 Route::get('/projects', [ProjectController::class, 'index'])->name('api.projects.index');
 Route::get('/projects/{slug}', [ProjectController::class, 'show'])->name('api.projects.show');
 Route::post('/messages', [MessageController::class, 'store'])->name('api.messages.store');
+Route::get('/social-links', [SocialLinkController::class, 'index'])->name('api.social-links.index');
