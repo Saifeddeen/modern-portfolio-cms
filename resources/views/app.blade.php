@@ -14,7 +14,7 @@
 
     <!-- Scripts -->
     @routes
-    @vite(['resources/css/app.css', 'resources/js/app.ts'])
+    @vite(['resources/js/app.ts'])
     @inertiaHead
 
     <!-- Dark Mode Initialization (Prevent FOUC) -->
