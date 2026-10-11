@@ -91,7 +91,7 @@ const saveLink = () => {
                 }
             };
 
-            if (isEditing.value) {
+            if (isEditing.value && form.id !== null) {
                 form.put(route('social-links.update', form.id), options);
             } else {
                 form.post(route('social-links.store'), options);

@@ -99,7 +99,7 @@ const saveSkill = () => {
                 }
             };
 
-            if (isEditing.value) {
+            if (isEditing.value && form.id !== null) {
                 form.put(route('skills.update', form.id), options);
             } else {
                 form.post(route('skills.store'), options);
@@ -156,13 +156,13 @@ const deleteSkill = (skill: any) => {
                 <Column header="Title">
                     <template #body="slotProps">
                         <span class="font-medium text-graphite-800 dark:text-white">{{ slotProps.data.title?.en || 'N/A'
-                        }}</span>
+                            }}</span>
                     </template>
                 </Column>
                 <Column header="Description">
                     <template #body="slotProps">
                         <span class="text-sm text-graphite-500 line-clamp-2">{{ slotProps.data.description?.en || '-'
-                        }}</span>
+                            }}</span>
                     </template>
                 </Column>
                 <Column header="Actions" style="width: 15%">
@@ -264,7 +264,7 @@ const deleteSkill = (skill: any) => {
                     <div>
                         <p class="text-xs text-graphite-500">Title</p>
                         <p class="font-medium text-graphite-800 dark:text-white">{{ viewSkillData.title?.[code] || 'N/A'
-                        }}</p>
+                            }}</p>
                     </div>
                     <div>
                         <p class="text-xs text-graphite-500">Description</p>
