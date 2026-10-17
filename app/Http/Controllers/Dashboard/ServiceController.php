@@ -7,6 +7,7 @@ use App\Models\Service;
 use App\Rules\ValidSvg;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 use Inertia\Inertia;
 
 class ServiceController extends Controller
@@ -94,5 +95,65 @@ class ServiceController extends Controller
         $service->delete();
 
         return back()->with('success', 'Service deleted successfully.');
+    }
+
+    public function importJson(Request $request)
+    {
+        $request->validate([
+            'json_file' => ['required', 'file', 'mimes:json', 'max:2048'],
+        ]);
+
+        $content = file_get_contents($request->file('json_file')->getRealPath());
+        $items   = json_decode($content, true);
+
+        if (json_last_error() !== JSON_ERROR_NONE || ! is_array($items)) {
+            return back()->withErrors(['json_file' => 'Invalid JSON format. The file must contain a valid JSON array.']);
+        }
+
+        $errors  = [];
+        $created = 0;
+
+        foreach ($items as $index => $item) {
+            $validator = Validator::make($item, [
+                'vue_iconify'           => ['nullable', 'string', 'max:255'],
+                'svg_icon'              => ['nullable', 'string', new ValidSvg],
+                'name'                  => ['required', 'array'],
+                'name.*'                => ['required', 'string', 'max:255'],
+                'short_description'     => ['required', 'array'],
+                'short_description.*'   => ['required', 'string'],
+                'full_description'      => ['nullable', 'array'],
+                'full_description.*'    => ['nullable', 'string'],
+            ]);
+
+            if ($validator->fails()) {
+                $errors[] = "Item #" . ($index + 1) . ": " . implode(' ', $validator->errors()->all());
+                continue;
+            }
+
+            $validated = $validator->validated();
+
+            $service = new Service();
+            $service->vue_iconify = $validated['vue_iconify'] ?? null;
+            $service->svg_icon    = $validated['svg_icon'] ?? null;
+
+            $service->setTranslations('name', $validated['name']);
+            $service->setTranslations('short_description', $validated['short_description']);
+
+            if (isset($validated['full_description'])) {
+                $service->setTranslations('full_description', $validated['full_description']);
+            }
+
+            $service->save();
+
+            $created++;
+        }
+
+        if (! empty($errors)) {
+            $message = "Imported {$created} services. Skipped " . count($errors) . " items with errors: " . implode(' | ', $errors);
+
+            return back()->with('warning', $message);
+        }
+
+        return back()->with('success', "Successfully imported {$created} services.");
     }
 }

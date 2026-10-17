@@ -32,8 +32,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/settings', [SettingController::class, 'edit'])->name('settings.edit');
     Route::post('/settings', [SettingController::class, 'update'])->name('settings.update');
     Route::resource('technologies', TechnologyController::class)->except(['show', 'create', 'edit']);
+    Route::post('/technologies/import-json', [TechnologyController::class, 'importJson'])->name('technologies.import-json');
     Route::resource('services', ServiceController::class)->except(['show', 'create', 'edit']);
+    Route::post('/services/import-json', [ServiceController::class, 'importJson'])->name('services.import-json');
     Route::resource('skills', SkillController::class)->except(['show', 'create', 'edit']);
+    Route::post('/skills/import-json', [SkillController::class, 'importJson'])->name('skills.import-json');
     Route::resource('projects', ProjectController::class)->except(['show', 'create', 'edit']);
     Route::get('/projects/{project}', [ProjectController::class, 'show'])->name('projects.show');
     Route::post('/projects/{project}/gallery', [ProjectController::class, 'storeGallery'])->name('projects.gallery.store');

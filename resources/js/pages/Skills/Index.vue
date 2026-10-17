@@ -2,7 +2,7 @@
 import { computed, ref } from 'vue';
 import { Head, router, useForm } from '@inertiajs/vue3';
 import DashboardLayout from '@/Layouts/DashboardLayout.vue';
-import { Button, DataTable, Column, Dialog, InputText, Textarea, Tabs, TabList, Tab, TabPanels, TabPanel } from 'primevue';
+import { Button, DataTable, Column, Dialog, InputText, Textarea, Tabs, TabList, Tab, TabPanels, TabPanel, FileUpload } from 'primevue';
 import { useToast } from 'primevue/usetoast';
 import { useConfirm } from 'primevue/useconfirm';
 
@@ -126,6 +126,48 @@ const deleteSkill = (skill: any) => {
         }
     });
 };
+
+// --- JSON Import ---
+const importDialogVisible = ref(false);
+const importFile = ref<File | null>(null);
+const importProcessing = ref(false);
+
+const onImportFileSelect = (event: any) => {
+    importFile.value = event.files ? event.files[0] : null;
+};
+
+const submitImport = () => {
+    if (!importFile.value) {
+        toast.add({ severity: 'warn', summary: 'No file', detail: 'Please select a JSON file first.', life: 3000 });
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append('json_file', importFile.value);
+
+    importProcessing.value = true;
+
+    router.post(route('skills.import-json'), formData, {
+        preserveScroll: true,
+        onSuccess: (page: any) => {
+            importDialogVisible.value = false;
+            importFile.value = null;
+            const flash = (page.props as any).flash;
+            if (flash?.warning) {
+                toast.add({ severity: 'warn', summary: 'Partial Import', detail: flash.warning, life: 8000 });
+            } else {
+                toast.add({ severity: 'success', summary: 'Imported', detail: flash?.success || 'Import completed.', life: 4000 });
+            }
+        },
+        onError: (errors: any) => {
+            const msg = Object.values(errors || {}).flat().join(' ');
+            toast.add({ severity: 'error', summary: 'Import Failed', detail: msg || 'An error occurred during import.', life: 6000 });
+        },
+        onFinish: () => {
+            importProcessing.value = false;
+        },
+    });
+};
 </script>
 
 <template>
@@ -137,7 +179,10 @@ const deleteSkill = (skill: any) => {
             class="bg-white dark:bg-graphite-950 p-6 rounded-xl shadow-soft border border-graphite-200 dark:border-graphite-800">
             <div class="flex items-center justify-between mb-6">
                 <h1 class="text-xl font-semibold text-graphite-800 dark:text-white">Skills Management</h1>
-                <Button label="Add New Skill" icon="pi pi-plus" @click="openCreateDialog" />
+                <div class="flex gap-2">
+                    <Button label="Import JSON" icon="pi pi-upload" severity="secondary" @click="importDialogVisible = true" />
+                    <Button label="Add New Skill" icon="pi pi-plus" @click="openCreateDialog" />
+                </div>
             </div>
 
             <DataTable :value="props.skills" tableStyle="min-width: 50rem">
@@ -276,6 +321,54 @@ const deleteSkill = (skill: any) => {
 
             <template #footer>
                 <Button label="Close" icon="pi pi-times" @click="viewDialogVisible = false" text />
+            </template>
+        </Dialog>
+
+        <!-- JSON Import Dialog -->
+        <Dialog v-model:visible="importDialogVisible" header="Import Skills from JSON" modal class="p-fluid w-[36rem]">
+            <div class="space-y-5 pt-4">
+                <div class="p-4 rounded-lg bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800">
+                    <p class="text-sm font-semibold text-blue-700 dark:text-blue-300 mb-2">Expected JSON format:</p>
+                    <pre class="text-xs text-blue-600 dark:text-blue-400 whitespace-pre-wrap font-mono">[
+  {
+    "title": { "en": "UI Design", "ar": "تصميم الواجهات" },
+    "description": { "en": "...", "ar": "..." },
+    "vue_iconify": "mdi:palette",
+    "svg_icon": null
+  }
+]</pre>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-graphite-600 dark:text-graphite-400 mb-2">
+                        Select JSON File <span class="text-red-500">*</span>
+                    </label>
+                    <FileUpload
+                        id="skill-json-file"
+                        mode="basic"
+                        accept=".json,application/json"
+                        chooseLabel="Choose JSON File"
+                        class="w-full"
+                        :maxFileSize="2097152"
+                        @select="onImportFileSelect"
+                    />
+                    <p v-if="importFile" class="mt-2 text-sm text-graphite-500">
+                        Selected: <span class="font-medium text-graphite-700 dark:text-graphite-300">{{ importFile.name }}</span>
+                        ({{ (importFile.size / 1024).toFixed(1) }} KB)
+                    </p>
+                </div>
+            </div>
+
+            <template #footer>
+                <Button label="Cancel" icon="pi pi-times" @click="importDialogVisible = false" text />
+                <Button
+                    label="Import"
+                    icon="pi pi-upload"
+                    severity="success"
+                    :loading="importProcessing"
+                    :disabled="!importFile"
+                    @click="submitImport"
+                />
             </template>
         </Dialog>
     </DashboardLayout>
